@@ -10,7 +10,7 @@ const program = new Command();
 program
   .name("erwinmvc")
   .description("CLI for @erwininteractive/mvc framework")
-  .version("0.1.1");
+  .version("0.1.2");
 
 // Init command - scaffold a new application
 program

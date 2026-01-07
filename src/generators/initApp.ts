@@ -3,6 +3,17 @@ import path from "path";
 import { execSync } from "child_process";
 import { getTemplatesDir, getPrismaDir, getEnvExamplePath, getPackageRoot } from "./paths";
 
+// Get version from package.json
+function getFrameworkVersion(): string {
+  try {
+    const pkgPath = path.join(getPackageRoot(), "package.json");
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
+    return pkg.version || "0.1.1";
+  } catch {
+    return "0.1.1";
+  }
+}
+
 export interface InitOptions {
   skipInstall?: boolean;
   withDatabase?: boolean;
@@ -25,23 +36,27 @@ export async function initApp(dir: string, options: InitOptions = {}): Promise<v
   // Copy app scaffold templates
   copyDirRecursive(templateDir, targetDir);
 
+  // Rename dotfiles (npm doesn't publish .gitignore, so we use gitignore.txt)
+  const gitignoreSrc = path.join(targetDir, "gitignore.txt");
+  const gitignoreDest = path.join(targetDir, ".gitignore");
+  if (fs.existsSync(gitignoreSrc)) {
+    fs.renameSync(gitignoreSrc, gitignoreDest);
+  }
+
   // Copy .env.example
   const envExample = getEnvExamplePath();
   if (fs.existsSync(envExample)) {
     fs.copyFileSync(envExample, path.join(targetDir, ".env.example"));
   }
 
-  // Update package.json with app name and framework path
+  // Update package.json with app name and framework version
   const appPackageJson = path.join(targetDir, "package.json");
   if (fs.existsSync(appPackageJson)) {
     const pkg = JSON.parse(fs.readFileSync(appPackageJson, "utf-8"));
     pkg.name = path.basename(dir);
     
-    // Use relative path to framework for local development
-    // When published, this would be the npm package version
-    const frameworkRoot = getPackageRoot();
-    const relativePath = path.relative(targetDir, frameworkRoot);
-    pkg.dependencies["@erwininteractive/mvc"] = `file:${relativePath}`;
+    // Use npm package version (not file path)
+    pkg.dependencies["@erwininteractive/mvc"] = `^${getFrameworkVersion()}`;
     
     fs.writeFileSync(appPackageJson, JSON.stringify(pkg, null, 2));
   }

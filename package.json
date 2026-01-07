@@ -1,6 +1,6 @@
 {
   "name": "@erwininteractive/mvc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A lightweight, full-featured MVC framework for Node.js with Express, Prisma, and EJS",
   "main": "dist/framework/index.js",
   "types": "dist/framework/index.d.ts",
