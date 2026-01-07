@@ -5,91 +5,208 @@ A lightweight, full-featured MVC framework for Node.js 20+ built with TypeScript
 ## Features
 
 - **Express** - Fast, minimal web framework
-- **Prisma** - Modern database ORM with PostgreSQL
 - **EJS + Alpine.js** - Server-side templating with reactive client-side components
-- **Redis Sessions** - Scalable session management
+- **Optional Database** - Add Prisma + PostgreSQL when you need it
+- **Optional Redis Sessions** - Scalable session management
 - **JWT Authentication** - Secure token-based auth with bcrypt password hashing
 - **CLI Tools** - Scaffold apps and generate models/controllers
 
 ## Quick Start
 
-### Create a New Application
-
 ```bash
 npx @erwininteractive/mvc init myapp
 cd myapp
-cp .env.example .env
-# Edit .env with your database configuration
-npx prisma migrate dev --name init
 npm run dev
 ```
 
-### Generate a Model
+Visit http://localhost:3000 - your app is running!
+
+---
+
+## Getting Started
+
+### Step 1: Create a New Page
+
+Create `src/views/about.ejs`:
+
+```html
+<!doctype html>
+<html>
+<head>
+  <title><%= title %></title>
+</head>
+<body>
+  <h1><%= title %></h1>
+  <p>Welcome to my about page!</p>
+</body>
+</html>
+```
+
+### Step 2: Add a Route
+
+Edit `src/server.ts`:
+
+```typescript
+app.get("/about", (req, res) => {
+  res.render("about", { title: "About Us" });
+});
+```
+
+### Step 3: View Your Page
+
+Visit http://localhost:3000/about
+
+---
+
+## Creating Pages
+
+### EJS Templates
+
+Create `.ejs` files in `src/views/`. EJS lets you use JavaScript in HTML:
+
+```html
+<!-- Output a variable (escaped) -->
+<h1><%= title %></h1>
+
+<!-- Output raw HTML -->
+<%- htmlContent %>
+
+<!-- JavaScript logic -->
+<% if (user) { %>
+  <p>Welcome, <%= user.name %>!</p>
+<% } %>
+
+<!-- Loop through items -->
+<ul>
+<% items.forEach(item => { %>
+  <li><%= item.name %></li>
+<% }); %>
+</ul>
+
+<!-- Include another template -->
+<%- include('partials/header') %>
+```
+
+### Adding Routes
+
+```typescript
+// Simple page
+app.get("/contact", (req, res) => {
+  res.render("contact", { title: "Contact Us" });
+});
+
+// Handle form submission
+app.post("/contact", (req, res) => {
+  const { name, email, message } = req.body;
+  console.log(`Message from ${name}: ${message}`);
+  res.redirect("/contact?sent=true");
+});
+
+// JSON API endpoint
+app.get("/api/users", (req, res) => {
+  res.json([{ id: 1, name: "John" }]);
+});
+```
+
+---
+
+## Controllers
+
+Generate a controller with the CLI:
+
+```bash
+npx erwinmvc generate controller Product
+```
+
+This creates `src/controllers/ProductController.ts` with CRUD actions:
+
+| Action    | HTTP Method | URL              | Description |
+|-----------|-------------|------------------|-------------|
+| `index`   | GET         | /products        | List all    |
+| `show`    | GET         | /products/:id    | Show one    |
+| `store`   | POST        | /products        | Create      |
+| `update`  | PUT         | /products/:id    | Update      |
+| `destroy` | DELETE      | /products/:id    | Delete      |
+
+### Using Controllers
+
+```typescript
+import * as ProductController from "./controllers/ProductController";
+
+app.get("/products", ProductController.index);
+app.get("/products/:id", ProductController.show);
+app.post("/products", ProductController.store);
+app.put("/products/:id", ProductController.update);
+app.delete("/products/:id", ProductController.destroy);
+```
+
+---
+
+## Database (Optional)
+
+Your app works without a database. Add one when you need it.
+
+### Setup
+
+```bash
+npm run db:setup
+```
+
+Edit `.env` with your database URL:
+
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
+```
+
+Run migrations:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+### Generate Models
 
 ```bash
 npx erwinmvc generate model Post
 ```
 
-This creates a Prisma model and runs migrations.
+Edit `prisma/schema.prisma` to add fields:
 
-### Generate a Controller
+```prisma
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("posts")
+}
+```
+
+Run migrations again:
 
 ```bash
-npx erwinmvc generate controller Post
+npx prisma migrate dev --name add-post-fields
 ```
 
-This creates a CRUD controller with routes:
-- `GET /posts` - List all posts
-- `GET /posts/:id` - Show a single post
-- `POST /posts` - Create a post
-- `PUT /posts/:id` - Update a post
-- `DELETE /posts/:id` - Delete a post
-
-## CLI Commands
-
-| Command | Description |
-|---------|-------------|
-| `erwinmvc init <dir>` | Scaffold a new MVC application |
-| `erwinmvc generate model <name>` | Generate a Prisma model |
-| `erwinmvc generate controller <name>` | Generate a CRUD controller |
-
-### Options
-
-**init:**
-- `--skip-install` - Skip running npm install
-- `--skip-prisma` - Skip Prisma client generation
-
-**generate model:**
-- `--skip-migrate` - Skip running Prisma migrate
-
-**generate controller:**
-- `--no-views` - Skip generating EJS views
-
-## Framework API
-
-### App Factory
-
-```typescript
-import { createMvcApp, startServer } from "@erwininteractive/mvc";
-
-const { app, redisClient } = await createMvcApp({
-  viewsPath: "src/views",
-  publicPath: "public",
-});
-
-startServer(app);
-```
-
-### Database
+### Use in Code
 
 ```typescript
 import { getPrismaClient } from "@erwininteractive/mvc";
 
 const prisma = getPrismaClient();
-const users = await prisma.user.findMany();
+
+app.get("/posts", async (req, res) => {
+  const posts = await prisma.post.findMany();
+  res.render("posts/index", { posts });
+});
 ```
 
-### Authentication
+---
+
+## Authentication
 
 ```typescript
 import {
@@ -115,59 +232,94 @@ app.get("/protected", authenticate, (req, res) => {
 });
 ```
 
-### Routing
+---
 
-```typescript
-import { registerControllers } from "@erwininteractive/mvc";
+## CLI Commands
 
-// Auto-register all *Controller.ts files
-await registerControllers(app, path.resolve("src/controllers"));
-```
+| Command | Description |
+|---------|-------------|
+| `npx @erwininteractive/mvc init <dir>` | Create a new app |
+| `npx erwinmvc generate controller <name>` | Generate a CRUD controller |
+| `npx erwinmvc generate model <name>` | Generate a database model |
 
-## Environment Variables
+### Init Options
 
-Create a `.env` file with:
+| Option | Description |
+|--------|-------------|
+| `--skip-install` | Skip running npm install |
+| `--with-database` | Include Prisma database setup |
 
-```env
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/yourdb?schema=public"
-REDIS_URL="redis://localhost:6379"
-JWT_SECRET="your-secret-key"
-SESSION_SECRET="your-session-secret"
-PORT=3000
-NODE_ENV=development
-```
+### Generate Options
+
+| Option | Description |
+|--------|-------------|
+| `--skip-migrate` | Skip running Prisma migrate (model) |
+| `--no-views` | Skip generating EJS views (controller) |
+
+---
 
 ## Project Structure
-
-Generated applications follow this structure:
 
 ```
 myapp/
 ├── src/
-│   ├── controllers/     # Route controllers
-│   ├── middleware/      # Express middleware
-│   ├── views/           # EJS templates
-│   └── server.ts        # Entry point
-├── prisma/
-│   └── schema.prisma    # Database schema
-├── public/              # Static files
+│   ├── server.ts           # Main app - add routes here
+│   ├── views/              # EJS templates
+│   ├── controllers/        # Route handlers (optional)
+│   └── middleware/         # Express middleware (optional)
+├── public/                 # Static files (CSS, JS, images)
+├── prisma/                 # Database (after db:setup)
+│   └── schema.prisma
 ├── .env.example
+├── .gitignore
 ├── package.json
 └── tsconfig.json
 ```
 
-## Controller Convention
+### Static Files
 
-Controllers export named functions that map to routes:
+Files in `public/` are served at the root URL:
 
-```typescript
-// src/controllers/PostController.ts
-export async function index(req, res) { /* GET /posts */ }
-export async function show(req, res)  { /* GET /posts/:id */ }
-export async function store(req, res) { /* POST /posts */ }
-export async function update(req, res) { /* PUT /posts/:id */ }
-export async function destroy(req, res) { /* DELETE /posts/:id */ }
 ```
+public/css/style.css  →  /css/style.css
+public/images/logo.png  →  /images/logo.png
+```
+
+---
+
+## App Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server (auto-reload) |
+| `npm run build` | Build for production |
+| `npm start` | Run production build |
+| `npm run db:setup` | Install database dependencies |
+| `npm run db:migrate` | Run database migrations |
+
+---
+
+## Environment Variables
+
+All optional. Create `.env` from `.env.example`:
+
+```env
+DATABASE_URL="postgresql://user:pass@localhost:5432/mydb"  # For database
+REDIS_URL="redis://localhost:6379"                         # For sessions
+JWT_SECRET="your-secret-key"                               # For auth
+SESSION_SECRET="your-session-secret"                       # For sessions
+PORT=3000                                                  # Server port
+NODE_ENV=development                                       # Environment
+```
+
+---
+
+## Learn More
+
+- [Express.js Documentation](https://expressjs.com/)
+- [EJS Documentation](https://ejs.co/)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [Alpine.js Documentation](https://alpinejs.dev/)
 
 ## License
 
