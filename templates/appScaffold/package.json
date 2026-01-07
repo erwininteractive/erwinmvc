@@ -1,0 +1,23 @@
+{
+  "name": "my-mvc-app",
+  "version": "1.0.0",
+  "description": "MVC application built with @erwininteractive/mvc",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "db:setup": "npm install @prisma/client prisma && npx prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "@erwininteractive/mvc": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

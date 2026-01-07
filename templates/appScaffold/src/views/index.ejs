@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> - MVC App</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    h1 { color: #333; margin-top: 0; }
+    h2 { color: #333; margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; }
+    h3 { color: #444; margin-top: 1.25rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    p { color: #666; margin: 0.5rem 0; }
+    ul, ol { color: #666; margin: 0.5rem 0; padding-left: 1.5rem; }
+    li { margin: 0.25rem 0; }
+    code {
+      background: #f4f4f4;
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+    pre code { background: none; padding: 0; }
+    .success-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .success-banner h1 { color: white; margin: 0; }
+    .success-banner p { color: rgba(255,255,255,0.9); margin: 0.25rem 0 0; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem; }
+    .tab {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: #666;
+    }
+    .tab:hover { background: #f4f4f4; }
+    .tab.active { background: #667eea; color: white; }
+    a { color: #667eea; }
+    .file-tree {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+    .step-number {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-size: 0.85rem;
+      margin-right: 0.5rem;
+    }
+    .step { margin: 1rem 0; }
+  </style>
+</head>
+<body>
+  <div class="card" x-data="{ tab: 'next' }">
+    <div class="success-banner">
+      <h1>Your app is running!</h1>
+      <p>Server started at http://localhost:<%= process.env.PORT || 3000 %></p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab" :class="{ active: tab === 'next' }" @click="tab = 'next'">Next Steps</button>
+      <button class="tab" :class="{ active: tab === 'pages' }" @click="tab = 'pages'">Creating Pages</button>
+      <button class="tab" :class="{ active: tab === 'controllers' }" @click="tab = 'controllers'">Controllers</button>
+      <button class="tab" :class="{ active: tab === 'database' }" @click="tab = 'database'">Database</button>
+      <button class="tab" :class="{ active: tab === 'structure' }" @click="tab = 'structure'">Project Structure</button>
+    </div>
+
+    <!-- NEXT STEPS TAB -->
+    <div x-show="tab === 'next'" x-transition>
+      <h2>Getting Started</h2>
+      
+      <div class="step">
+        <p><span class="step-number">1</span><strong>Create a new page</strong></p>
+        <p>Create <code>src/views/about.ejs</code> with your HTML content.</p>
+      </div>
+
+      <div class="step">
+        <p><span class="step-number">2</span><strong>Add a route for it</strong></p>
+        <p>Edit <code>src/server.ts</code> and add:</p>
+        <pre><code>app.get("/about", (req, res) => {
+  res.render("about", { title: "About Us" });
+});</code></pre>
+      </div>
+
+      <div class="step">
+        <p><span class="step-number">3</span><strong>View your page</strong></p>
+        <p>Visit <a href="/about">http://localhost:3000/about</a></p>
+      </div>
+
+      <h3>Key Files to Edit</h3>
+      <ul>
+        <li><code>src/server.ts</code> - Add routes and app configuration</li>
+        <li><code>src/views/*.ejs</code> - Create page templates</li>
+        <li><code>public/</code> - Add CSS, images, JavaScript files</li>
+      </ul>
+    </div>
+
+    <!-- CREATING PAGES TAB -->
+    <div x-show="tab === 'pages'" x-transition>
+      <h2>Creating Pages</h2>
+      
+      <h3>1. Create a View Template</h3>
+      <p>Create a new file in <code>src/views/</code>. Example: <code>src/views/contact.ejs</code></p>
+      <pre><code>&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+  &lt;p&gt;Get in touch with us!&lt;/p&gt;
+  
+  &lt;form method="POST" action="/contact"&gt;
+    &lt;input type="text" name="name" placeholder="Name"&gt;
+    &lt;input type="email" name="email" placeholder="Email"&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <h3>2. Add a Route</h3>
+      <p>In <code>src/server.ts</code>, add routes for your page:</p>
+      <pre><code>// Show the contact page
+app.get("/contact", (req, res) => {
+  res.render("contact", { title: "Contact Us" });
+});
+
+// Handle form submission
+app.post("/contact", (req, res) => {
+  const { name, email } = req.body;
+  console.log(`Message from ${name} (${email})`);
+  res.redirect("/contact?sent=true");
+});</code></pre>
+
+      <h3>EJS Template Features</h3>
+      <ul>
+        <li><code>&lt;%= variable %&gt;</code> - Output escaped value</li>
+        <li><code>&lt;%- html %&gt;</code> - Output raw HTML</li>
+        <li><code>&lt;% if (condition) { %&gt;</code> - JavaScript logic</li>
+        <li><code>&lt;%- include('partial') %&gt;</code> - Include another template</li>
+      </ul>
+    </div>
+
+    <!-- CONTROLLERS TAB -->
+    <div x-show="tab === 'controllers'" x-transition>
+      <h2>Creating Controllers</h2>
+      <p>Controllers help organize your routes. Generate one with the CLI:</p>
+      <pre><code>npx erwinmvc generate controller Product</code></pre>
+      
+      <p>This creates <code>src/controllers/ProductController.ts</code> with CRUD actions:</p>
+      <ul>
+        <li><code>index</code> - GET /products (list all)</li>
+        <li><code>show</code> - GET /products/:id (show one)</li>
+        <li><code>store</code> - POST /products (create)</li>
+        <li><code>update</code> - PUT /products/:id (update)</li>
+        <li><code>destroy</code> - DELETE /products/:id (delete)</li>
+      </ul>
+
+      <h3>Using Controllers</h3>
+      <p>Import and use your controller in <code>src/server.ts</code>:</p>
+      <pre><code>import * as ProductController from "./controllers/ProductController";
+
+app.get("/products", ProductController.index);
+app.get("/products/:id", ProductController.show);
+app.post("/products", ProductController.store);
+app.put("/products/:id", ProductController.update);
+app.delete("/products/:id", ProductController.destroy);</code></pre>
+
+      <h3>Simple Controller Example</h3>
+      <p>You can also write controllers manually:</p>
+      <pre><code>// src/controllers/PagesController.ts
+import { Request, Response } from "express";
+
+export function home(req: Request, res: Response) {
+  res.render("home", { title: "Home" });
+}
+
+export function about(req: Request, res: Response) {
+  res.render("about", { title: "About" });
+}</code></pre>
+    </div>
+
+    <!-- DATABASE TAB -->
+    <div x-show="tab === 'database'" x-transition>
+      <h2>Adding a Database</h2>
+      <p>Your app works without a database, but you can add one when needed.</p>
+
+      <h3>1. Setup Prisma</h3>
+      <pre><code>npm run db:setup</code></pre>
+
+      <h3>2. Configure Database URL</h3>
+      <p>Copy <code>.env.example</code> to <code>.env</code> and set your database URL:</p>
+      <pre><code>DATABASE_URL="postgresql://user:password@localhost:5432/mydb"</code></pre>
+
+      <h3>3. Create Your First Migration</h3>
+      <pre><code>npx prisma migrate dev --name init</code></pre>
+
+      <h3>4. Generate a Model</h3>
+      <pre><code>npx erwinmvc generate model Post</code></pre>
+      <p>This adds a model to <code>prisma/schema.prisma</code>. Edit it to add fields:</p>
+      <pre><code>model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("posts")
+}</code></pre>
+
+      <h3>5. Use in Your Code</h3>
+      <pre><code>import { getPrismaClient } from "@erwininteractive/mvc";
+
+const prisma = getPrismaClient();
+
+// In a route handler:
+app.get("/posts", async (req, res) => {
+  const posts = await prisma.post.findMany();
+  res.render("posts/index", { posts });
+});</code></pre>
+    </div>
+
+    <!-- PROJECT STRUCTURE TAB -->
+    <div x-show="tab === 'structure'" x-transition>
+      <h2>Project Structure</h2>
+      <div class="file-tree">
+        src/<br>
+        &nbsp;&nbsp;server.ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Main app - routes go here<br>
+        &nbsp;&nbsp;views/<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;index.ejs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# This page<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;*.ejs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Your page templates<br>
+        &nbsp;&nbsp;controllers/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Route handlers (optional)<br>
+        &nbsp;&nbsp;middleware/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Express middleware (optional)<br>
+        public/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Static files<br>
+        &nbsp;&nbsp;css/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Stylesheets<br>
+        &nbsp;&nbsp;js/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Client-side JavaScript<br>
+        &nbsp;&nbsp;images/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Images<br>
+        prisma/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Database (after db:setup)<br>
+        &nbsp;&nbsp;schema.prisma&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Database models<br>
+      </div>
+
+      <h3>CLI Commands</h3>
+      <ul>
+        <li><code>npm run dev</code> - Start development server (auto-reload)</li>
+        <li><code>npm run build</code> - Build for production</li>
+        <li><code>npm start</code> - Run production build</li>
+        <li><code>npx erwinmvc generate controller Name</code> - Create a controller</li>
+        <li><code>npx erwinmvc generate model Name</code> - Create a database model</li>
+      </ul>
+
+      <h3>Static Files</h3>
+      <p>Files in <code>public/</code> are served directly:</p>
+      <ul>
+        <li><code>public/css/style.css</code> → <code>/css/style.css</code></li>
+        <li><code>public/images/logo.png</code> → <code>/images/logo.png</code></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

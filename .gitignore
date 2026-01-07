@@ -1,0 +1,14 @@
+node_modules/
+coverage/
+dist/
+prisma/migrations/
+.DS_Store
+.env
+.env.*
+!.env.example
+AGENTS.md
+erwinmvc.md
+npm-debug.log*
+pnpm-lock.yaml
+*.tsbuildinfo
+yarn.lock

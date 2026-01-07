@@ -1,0 +1,98 @@
+import type { Request, Response } from "express";
+import { getPrismaClient } from "@erwininteractive/mvc";
+
+const prisma = getPrismaClient();
+
+/**
+ * GET /<%= resourcePath %>
+ * List all <%= lowerModelName %> records.
+ */
+export async function index(req: Request, res: Response): Promise<void> {
+  try {
+    const data = await prisma.<%= lowerModelName %>.findMany();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch <%= lowerModelName %> records" });
+  }
+}
+
+/**
+ * GET /<%= resourcePath %>/:id
+ * Show a single <%= lowerModelName %> record.
+ */
+export async function show(req: Request, res: Response): Promise<void> {
+  try {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      res.status(400).json({ error: "Invalid ID" });
+      return;
+    }
+
+    const item = await prisma.<%= lowerModelName %>.findUnique({ where: { id } });
+    if (!item) {
+      res.status(404).json({ error: "<%= modelName %> not found" });
+      return;
+    }
+
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch <%= lowerModelName %>" });
+  }
+}
+
+/**
+ * POST /<%= resourcePath %>
+ * Create a new <%= lowerModelName %> record.
+ */
+export async function store(req: Request, res: Response): Promise<void> {
+  try {
+    const data = req.body;
+    const item = await prisma.<%= lowerModelName %>.create({ data });
+    res.status(201).json(item);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create <%= lowerModelName %>" });
+  }
+}
+
+/**
+ * PUT /<%= resourcePath %>/:id
+ * Update a <%= lowerModelName %> record.
+ */
+export async function update(req: Request, res: Response): Promise<void> {
+  try {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      res.status(400).json({ error: "Invalid ID" });
+      return;
+    }
+
+    const data = req.body;
+    const item = await prisma.<%= lowerModelName %>.update({
+      where: { id },
+      data,
+    });
+
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update <%= lowerModelName %>" });
+  }
+}
+
+/**
+ * DELETE /<%= resourcePath %>/:id
+ * Delete a <%= lowerModelName %> record.
+ */
+export async function destroy(req: Request, res: Response): Promise<void> {
+  try {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      res.status(400).json({ error: "Invalid ID" });
+      return;
+    }
+
+    await prisma.<%= lowerModelName %>.delete({ where: { id } });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete <%= lowerModelName %>" });
+  }
+}
