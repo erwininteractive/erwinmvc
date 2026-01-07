@@ -4,13 +4,14 @@ import { Command } from "commander";
 import { initApp } from "./generators/initApp";
 import { generateModel } from "./generators/generateModel";
 import { generateController } from "./generators/generateController";
+import { generateResource } from "./generators/generateResource";
 
 const program = new Command();
 
 program
   .name("erwinmvc")
   .description("CLI for @erwininteractive/mvc framework")
-  .version("0.1.4");
+  .version("0.1.5");
 
 // Init command - scaffold a new application
 program
@@ -31,7 +32,7 @@ program
 const generate = program
   .command("generate")
   .alias("g")
-  .description("Generate models or controllers");
+  .description("Generate models, controllers, or resources");
 
 // Generate model
 generate
@@ -60,5 +61,34 @@ generate
       process.exit(1);
     }
   });
+
+// Generate resource (model + controller + views)
+generate
+  .command("resource <name>")
+  .description("Generate a complete resource (model + controller + views)")
+  .option("--skip-model", "Skip generating Prisma model")
+  .option("--skip-controller", "Skip generating controller")
+  .option("--skip-views", "Skip generating views")
+  .option("--skip-migrate", "Skip running Prisma migrate")
+  .option("--api-only", "Generate API-only controller (no views)")
+  .action(
+    async (
+      name: string,
+      options: {
+        skipModel?: boolean;
+        skipController?: boolean;
+        skipViews?: boolean;
+        skipMigrate?: boolean;
+        apiOnly?: boolean;
+      }
+    ) => {
+      try {
+        await generateResource(name, options);
+      } catch (err) {
+        console.error("Error:", err instanceof Error ? err.message : err);
+        process.exit(1);
+      }
+    }
+  );
 
 program.parse();

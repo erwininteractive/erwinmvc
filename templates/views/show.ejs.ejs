@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%%= title %></title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f5f5f5;
+    }
+    h1 { color: #333; margin-bottom: 1rem; }
+    .breadcrumb {
+      margin-bottom: 1.5rem;
+      color: #666;
+    }
+    .breadcrumb a { color: #667eea; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .field { margin-bottom: 1.5rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field-value {
+      font-size: 1.1rem;
+      color: #333;
+    }
+    .actions { display: flex; gap: 0.75rem; }
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn:hover { background: #5a6fd6; }
+    .btn-secondary { background: #6c757d; }
+    .btn-secondary:hover { background: #5a6268; }
+    .btn-danger { background: #dc3545; }
+    .btn-danger:hover { background: #c82333; }
+  </style>
+</head>
+<body>
+  <div class="breadcrumb">
+    <a href="/<%= resourcePath %>"><%= modelName %> List</a> / Details
+  </div>
+
+  <h1><%%= title %></h1>
+  
+  <div class="card">
+    <div class="field">
+      <div class="field-label">ID</div>
+      <div class="field-value"><%%= item.id %></div>
+    </div>
+    
+    <div class="field">
+      <div class="field-label">Created At</div>
+      <div class="field-value"><%%= new Date(item.createdAt).toLocaleString() %></div>
+    </div>
+    
+    <div class="field">
+      <div class="field-label">Updated At</div>
+      <div class="field-value"><%%= new Date(item.updatedAt).toLocaleString() %></div>
+    </div>
+    
+    <!-- Add more fields here as you add them to your model -->
+  </div>
+
+  <div class="actions">
+    <a href="/<%= resourcePath %>/<%%= item.id %>/edit" class="btn">Edit</a>
+    <a href="/<%= resourcePath %>" class="btn btn-secondary">Back to List</a>
+    <form method="POST" action="/<%= resourcePath %>/<%%= item.id %>?_method=DELETE" style="display:inline">
+      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this <%= lowerName %>?')">Delete</button>
+    </form>
+  </div>
+</body>
+</html>

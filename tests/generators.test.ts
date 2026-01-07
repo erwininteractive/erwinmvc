@@ -82,4 +82,45 @@ describe("Generators", () => {
       expect(content).toContain("getPrismaClient");
     });
   });
+
+  describe("generateResource", () => {
+    it("should have resource controller template available", () => {
+      const templatePath = path.resolve(__dirname, "../templates/controller.resource.ts.ejs");
+      expect(fs.existsSync(templatePath)).toBe(true);
+    });
+
+    it("should have all view templates available", () => {
+      const viewsDir = path.resolve(__dirname, "../templates/views");
+      const requiredViews = ["index.ejs.ejs", "show.ejs.ejs", "create.ejs.ejs", "edit.ejs.ejs"];
+
+      for (const view of requiredViews) {
+        const viewPath = path.join(viewsDir, view);
+        expect(fs.existsSync(viewPath)).toBe(true);
+      }
+    });
+
+    it("resource controller should contain form actions", () => {
+      const templatePath = path.resolve(__dirname, "../templates/controller.resource.ts.ejs");
+      const content = fs.readFileSync(templatePath, "utf-8");
+
+      // CRUD actions
+      expect(content).toContain("index");
+      expect(content).toContain("show");
+      expect(content).toContain("store");
+      expect(content).toContain("update");
+      expect(content).toContain("destroy");
+      // Form actions
+      expect(content).toContain("create");
+      expect(content).toContain("edit");
+    });
+
+    it("view templates should contain proper EJS escape sequences", () => {
+      const viewsDir = path.resolve(__dirname, "../templates/views");
+      const indexContent = fs.readFileSync(path.join(viewsDir, "index.ejs.ejs"), "utf-8");
+
+      // Double-escaped EJS tags for generated output
+      expect(indexContent).toContain("<%%");
+      expect(indexContent).toContain("<%=");
+    });
+  });
 });

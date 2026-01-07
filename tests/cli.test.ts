@@ -20,6 +20,7 @@ describe("CLI", () => {
     expect(content).toContain("initApp");
     expect(content).toContain("generateModel");
     expect(content).toContain("generateController");
+    expect(content).toContain("generateResource");
   });
 
   it("should define init command", () => {
@@ -36,5 +37,6 @@ describe("CLI", () => {
     expect(content).toContain('command("generate")');
     expect(content).toContain('command("model');
     expect(content).toContain('command("controller');
+    expect(content).toContain('command("resource');
   });
 });

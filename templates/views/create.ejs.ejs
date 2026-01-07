@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%%= title %></title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f5f5f5;
+    }
+    h1 { color: #333; margin-bottom: 1rem; }
+    .breadcrumb {
+      margin-bottom: 1.5rem;
+      color: #666;
+    }
+    .breadcrumb a { color: #667eea; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .error-message {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .form-error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+    }
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #eee;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .btn:hover { background: #5a6fd6; }
+    .btn-secondary { background: #6c757d; }
+    .btn-secondary:hover { background: #5a6268; }
+  </style>
+</head>
+<body>
+  <div class="breadcrumb">
+    <a href="/<%= resourcePath %>"><%= modelName %> List</a> / Create New
+  </div>
+
+  <h1><%%= title %></h1>
+  
+  <div class="card">
+    <%% if (errors && errors._form) { %>
+      <div class="form-error"><%%= errors._form %></div>
+    <%% } %>
+
+    <form method="POST" action="/<%= resourcePath %>">
+      <!-- 
+        Add your form fields here. Example:
+        
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" value="<%%- item.title || '' %>" required>
+          <%% if (errors && errors.title) { %>
+            <div class="error-message"><%%= errors.title %></div>
+          <%% } %>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description"><%%- item.description || '' %></textarea>
+        </div>
+      -->
+      
+      <div class="form-group">
+        <label for="placeholder">Placeholder Field</label>
+        <input type="text" id="placeholder" name="placeholder" placeholder="Edit this form to add your fields">
+        <p style="color: #666; font-size: 0.875rem; margin-top: 0.5rem;">
+          Edit this template at <code>src/views/<%= resourcePath %>/create.ejs</code> to add your model fields.
+        </p>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn">Create <%= modelName %></button>
+        <a href="/<%= resourcePath %>" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
