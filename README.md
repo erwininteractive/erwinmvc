@@ -110,9 +110,55 @@ app.get("/api/users", (req, res) => {
 
 ---
 
+## Resources
+
+Generate a complete resource (model + controller + views) with one command:
+
+```bash
+npx erwinmvc generate resource Post
+```
+
+This creates:
+- `prisma/schema.prisma` - Adds the Post model
+- `src/controllers/PostController.ts` - Full CRUD controller with form handling
+- `src/views/posts/index.ejs` - List view
+- `src/views/posts/show.ejs` - Detail view
+- `src/views/posts/create.ejs` - Create form
+- `src/views/posts/edit.ejs` - Edit form
+
+### Resource Routes
+
+| Action    | HTTP Method | URL              | Description      |
+|-----------|-------------|------------------|------------------|
+| `index`   | GET         | /posts           | List all         |
+| `create`  | GET         | /posts/create    | Show create form |
+| `store`   | POST        | /posts           | Create new       |
+| `show`    | GET         | /posts/:id       | Show one         |
+| `edit`    | GET         | /posts/:id/edit  | Show edit form   |
+| `update`  | PUT         | /posts/:id       | Update           |
+| `destroy` | DELETE      | /posts/:id       | Delete           |
+
+### Wiring Up Routes
+
+Add to `src/server.ts`:
+
+```typescript
+import * as PostController from "./controllers/PostController";
+
+app.get("/posts", PostController.index);
+app.get("/posts/create", PostController.create);
+app.post("/posts", PostController.store);
+app.get("/posts/:id", PostController.show);
+app.get("/posts/:id/edit", PostController.edit);
+app.put("/posts/:id", PostController.update);
+app.delete("/posts/:id", PostController.destroy);
+```
+
+---
+
 ## Controllers
 
-Generate a controller with the CLI:
+Generate just a controller (without model/views):
 
 ```bash
 npx erwinmvc generate controller Product
@@ -239,6 +285,7 @@ app.get("/protected", authenticate, (req, res) => {
 | Command | Description |
 |---------|-------------|
 | `npx @erwininteractive/mvc init <dir>` | Create a new app |
+| `npx erwinmvc generate resource <name>` | Generate model + controller + views |
 | `npx erwinmvc generate controller <name>` | Generate a CRUD controller |
 | `npx erwinmvc generate model <name>` | Generate a database model |
 
@@ -249,7 +296,17 @@ app.get("/protected", authenticate, (req, res) => {
 | `--skip-install` | Skip running npm install |
 | `--with-database` | Include Prisma database setup |
 
-### Generate Options
+### Resource Options
+
+| Option | Description |
+|--------|-------------|
+| `--skip-model` | Skip generating Prisma model |
+| `--skip-controller` | Skip generating controller |
+| `--skip-views` | Skip generating views |
+| `--skip-migrate` | Skip running Prisma migrate |
+| `--api-only` | Generate API-only controller (no views) |
+
+### Other Generate Options
 
 | Option | Description |
 |--------|-------------|
