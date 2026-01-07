@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { getTemplatesDir, getPrismaDir, getEnvExamplePath, getPackageRoot } from "./paths";
+import { getTemplatesDir, getPrismaDir, getPackageRoot } from "./paths";
 
 // Get version from package.json
 function getFrameworkVersion(): string {
@@ -36,17 +36,17 @@ export async function initApp(dir: string, options: InitOptions = {}): Promise<v
   // Copy app scaffold templates
   copyDirRecursive(templateDir, targetDir);
 
-  // Rename dotfiles (npm doesn't publish .gitignore, so we use gitignore.txt)
-  const gitignoreSrc = path.join(targetDir, "gitignore.txt");
-  const gitignoreDest = path.join(targetDir, ".gitignore");
-  if (fs.existsSync(gitignoreSrc)) {
-    fs.renameSync(gitignoreSrc, gitignoreDest);
-  }
-
-  // Copy .env.example
-  const envExample = getEnvExamplePath();
-  if (fs.existsSync(envExample)) {
-    fs.copyFileSync(envExample, path.join(targetDir, ".env.example"));
+  // Rename dotfiles (npm doesn't publish dotfiles, so we use .txt extensions)
+  const renames: [string, string][] = [
+    ["gitignore.txt", ".gitignore"],
+    ["env.example.txt", ".env.example"],
+  ];
+  for (const [src, dest] of renames) {
+    const srcPath = path.join(targetDir, src);
+    const destPath = path.join(targetDir, dest);
+    if (fs.existsSync(srcPath)) {
+      fs.renameSync(srcPath, destPath);
+    }
   }
 
   // Update package.json with app name and framework version
