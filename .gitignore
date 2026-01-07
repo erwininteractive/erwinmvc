@@ -6,6 +6,7 @@ prisma/migrations/
 .env
 .env.*
 !.env.example
+.npmrc
 AGENTS.md
 erwinmvc.md
 npm-debug.log*
