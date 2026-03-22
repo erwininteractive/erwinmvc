@@ -1,3 +1,10 @@
+## Release v0.4.1
+
+### Changes
+- test(auth): Add comprehensive test coverage for Auth module #15
+
+---
+
 ## Release v0.4.0
 
 ### Changes
