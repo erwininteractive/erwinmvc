@@ -9,6 +9,7 @@ A lightweight, full-featured MVC framework for Node.js 20+ built with TypeScript
 - **Optional Database** - Add Prisma + PostgreSQL when you need it
 - **Optional Redis Sessions** - Scalable session management
 - **JWT Authentication** - Secure token-based auth with bcrypt password hashing
+- **WebAuthn (Passkeys)** - Passwordless authentication with security keys (YubiKey, Touch ID, Face ID)
 - **CLI Tools** - Scaffold apps and generate models/controllers
 
 ## Quick Start
@@ -280,6 +281,45 @@ app.get("/protected", authenticate, (req, res) => {
 
 ---
 
+### WebAuthn (Passkeys)
+
+Passwordless authentication with security keys:
+
+```bash
+npx erwinmvc webauthn
+```
+
+This generates:
+- `src/controllers/WebAuthnController.ts` - Registration and login handlers
+- `src/views/webauthn/` - EJS views for register/login pages
+- Prisma `WebAuthnCredential` model for storing security key data
+
+```typescript
+import {
+  startRegistration,
+  completeRegistration,
+  startAuthentication,
+  completeAuthentication,
+  getRPConfig,
+} from "@erwininteractive/mvc";
+
+const { rpID, rpName } = getRPConfig();
+
+const options = await startRegistration(req, res);
+await completeRegistration(req, res);
+
+const options = await startAuthentication(req, res);
+await completeAuthentication(req, res);
+```
+
+Environment variables:
+- `WEBAUTHN_RP_ID` - Your domain (e.g., "localhost" or "example.com")
+- `WEBAUTHN_RP_NAME` - Your app name (e.g., "ErwinMVC App")
+
+Note: WebAuthn requires HTTPS or localhost.
+
+---
+
 ## CLI Commands
 
 | Command | Description |
@@ -288,6 +328,7 @@ app.get("/protected", authenticate, (req, res) => {
 | `npx erwinmvc generate resource <name>` | Generate model + controller + views |
 | `npx erwinmvc generate controller <name>` | Generate a CRUD controller |
 | `npx erwinmvc generate model <name>` | Generate a database model |
+| `npx erwinmvc webauthn` | Generate WebAuthn authentication (security keys) |
 
 ### Init Options
 

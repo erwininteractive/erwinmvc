@@ -14,5 +14,14 @@ export {
   authenticate,
 } from "./Auth";
 
+// WebAuthn
+export {
+  startRegistration,
+  completeRegistration,
+  startAuthentication,
+  completeAuthentication,
+  getRPConfig,
+} from "./WebAuthn";
+
 // Routing
 export { registerControllers, registerController } from "./Router";

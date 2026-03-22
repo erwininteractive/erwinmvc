@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <script src="https://cdn.jsdelivr.net/npm/@simplewebauthn/browser@9"></script>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { padding: 10px 20px; cursor: pointer; }
+    .error { color: red; margin-bottom: 15px; }
+    .success { color: green; margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+  <h1><%= title %></h1>
+
+  <% if (error) { %>
+    <div class="error"><%= error %></div>
+  <% } %>
+
+  <form id="webauthnForm" method="POST">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+    </div>
+
+    <button type="submit"><%= title %></button>
+  </form>
+
+  <script>
+    document.getElementById('webauthnForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const response = await fetch('/webauthn/start-authentication', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      });
+
+      const options = await response.json();
+      
+      if (options.error) {
+        alert(options.error);
+        return;
+      }
+
+      try {
+        const credential = await startAuthentication(options);
+        window.location.href = '/webauthn/complete?token=' + encodeURIComponent(JSON.stringify(credential));
+      } catch (err) {
+        alert('Authentication failed: ' + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

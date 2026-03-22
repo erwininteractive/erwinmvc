@@ -5,6 +5,7 @@ import { initApp } from "./generators/initApp";
 import { generateModel } from "./generators/generateModel";
 import { generateController } from "./generators/generateController";
 import { generateResource } from "./generators/generateResource";
+import { generateWebAuthn } from "./generators/generateWebAuthn";
 
 const program = new Command();
 
@@ -96,6 +97,23 @@ generate
     ): Promise<void> => {
       try {
         await generateResource(name, options);
+      } catch (err) {
+        console.error("Error:", err instanceof Error ? err.message : err);
+        process.exit(1);
+      }
+    },
+  );
+
+// WebAuthn command - generate WebAuthn authentication views and controller
+program
+  .command("webauthn")
+  .alias("w")
+  .description("Generate WebAuthn authentication (security key login)")
+  .option("--skip-migrate", "Skip running Prisma migrate")
+  .action(
+    async (options: { skipMigrate?: boolean }): Promise<void> => {
+      try {
+        await generateWebAuthn(options);
       } catch (err) {
         console.error("Error:", err instanceof Error ? err.message : err);
         process.exit(1);

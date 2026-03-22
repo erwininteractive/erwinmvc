@@ -1,6 +1,6 @@
 {
   "name": "@erwininteractive/mvc",
-  "version": "0.3.8",
+  "version": "0.4.0",
   "description": "A lightweight, full-featured MVC framework for Node.js with Express, Prisma, and EJS",
   "main": "dist/framework/index.js",
   "types": "dist/framework/index.d.ts",
@@ -39,6 +39,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
+    "@simplewebauthn/server": "^13.3.0",
+    "base64url": "^3.0.1",
     "bcryptjs": "^2.4.3",
     "commander": "^12.1.0",
     "connect-redis": "^7.1.1",

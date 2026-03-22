@@ -1,0 +1,53 @@
+import type { Request, Response } from "express";
+import {
+  startRegistration,
+  completeRegistration,
+  startAuthentication,
+  completeAuthentication,
+} from "@erwininteractive/mvc";
+
+/**
+ * Display the registration form
+ */
+export async function register(req: Request, res: Response): Promise<void> {
+  res.render("webauthn/register", {
+    title: "Register Security Key",
+    success: req.query.success === "true",
+    error: req.query.error || null,
+  });
+}
+
+/**
+ * Process registration response
+ */
+export async function completeRegister(req: Request, res: Response): Promise<void> {
+  try {
+    await completeRegistration(req, res);
+  } catch (err) {
+    const error = err instanceof Error ? err.message : err;
+    res.redirect("/webauthn/register?error=" + encodeURIComponent(error));
+  }
+}
+
+/**
+ * Display the login form
+ */
+export async function login(req: Request, res: Response): Promise<void> {
+  res.render("webauthn/login", {
+    title: "Log in with Security Key",
+    error: req.query.error || null,
+  });
+}
+
+/**
+ * Process authentication response
+ */
+export async function completeLogin(req: Request, res: Response): Promise<void> {
+  try {
+    await completeAuthentication(req, res);
+    res.redirect("/dashboard");
+  } catch (err) {
+    const error = err instanceof Error ? err.message : err;
+    res.redirect("/webauthn/login?error=" + encodeURIComponent(error));
+  }
+}

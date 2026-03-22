@@ -12,8 +12,28 @@ model User {
     email          String   @unique
     hashedPassword String
     role           String   @default("user")
+    username       String?  @unique
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
 
+    webauthnCredentials WebAuthnCredential[]
+
     @@map("users")
+}
+
+model WebAuthnCredential {
+    id             Int      @id @default(autoincrement())
+    credentialID   String   @unique
+    credentialPublicKey String
+    counter        Int
+    attestationType String   @default("none")
+    aaguid         String?
+    transports     String?
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    user           User     @relation(fields: [userID], references: [id], onDelete: Cascade)
+    userID         Int
+
+    @@map("webauthn_credentials")
 }
