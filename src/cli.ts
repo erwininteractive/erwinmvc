@@ -17,11 +17,12 @@ program
   .version("0.2.0")
   .addHelpText("after", `
 Examples:
-  $ erwinmvc init myapp                     Create a new app
-  $ erwinmvc generate resource Post         Generate CRUD for Post
-  $ erwinmvc webauthn                       Setup passkey authentication
-  $ erwinmvc make:auth                      Generate authentication system
-  $ erwinmvc list:routes                    Show all routes
+   $ erwinmvc init myapp                     Create a new app
+   $ erwinmvc init myapp --with-tailwind     Create app with Tailwind CSS
+   $ erwinmvc generate resource Post         Generate CRUD for Post
+   $ erwinmvc webauthn                       Setup passkey authentication
+   $ erwinmvc make:auth                      Generate authentication system
+   $ erwinmvc list:routes                    Show all routes
 `);
 
 // Init command - scaffold a new application
@@ -31,15 +32,17 @@ program
   .option("--skip-install", "Skip npm install")
   .option("--with-database", "Include database/Prisma setup")
   .option("--with-ci", "Include GitHub Actions CI workflow")
-  .action(
-    async (
-      dir: string,
-      options: {
-        skipInstall?: boolean;
-        withDatabase?: boolean;
-        withCi?: boolean;
-      },
-    ): Promise<void> => {
+  .option("--with-tailwind", "Include Tailwind CSS setup (with PostCSS)")
+   .action(
+     async (
+       dir: string,
+       options: {
+         skipInstall?: boolean;
+         withDatabase?: boolean;
+         withCi?: boolean;
+         withTailwind?: boolean;
+       },
+     ): Promise<void> => {
       try {
         await initApp(dir, options);
       } catch (err) {

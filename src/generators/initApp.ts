@@ -18,6 +18,7 @@ export interface InitOptions {
   skipInstall?: boolean;
   withDatabase?: boolean;
   withCi?: boolean;
+  withTailwind?: boolean;
 }
 
 /**
@@ -84,6 +85,11 @@ export async function initApp(dir: string, options: InitOptions = {}): Promise<v
     setupCi(targetDir);
   }
 
+  // Setup Tailwind CSS if requested
+  if (options.withTailwind) {
+    setupTailwind(targetDir);
+  }
+
   console.log(`
 Next steps:
   cd ${dir}
@@ -95,6 +101,11 @@ To add database support later:
   npm run db:setup
   # Edit .env with DATABASE_URL
   npx prisma migrate dev --name init
+` : ""}
+${options.withTailwind ? `
+To configure Tailwind CSS:
+  npm run tailwind
+  # Edit tailwind.config.cjs and src/assets/tailwind.css
 ` : ""}`);
 }
 
@@ -136,6 +147,53 @@ function setupDatabase(targetDir: string): void {
     execSync("npx prisma generate", { cwd: targetDir, stdio: "inherit" });
   } catch {
     console.error("Failed to setup Prisma. Run 'npm run db:setup' manually.");
+  }
+}
+
+/**
+ * Setup Tailwind CSS with PostCSS.
+ */
+function setupTailwind(targetDir: string): void {
+  console.log("\nSetting up Tailwind CSS...");
+  try {
+    execSync("npm install -D tailwindcss postcss autoprefixer", { cwd: targetDir, stdio: "inherit" });
+    // Removed npx command - using manual config
+
+    // Create assets directory
+    const assetsDir = path.join(targetDir, "src", "assets");
+    fs.mkdirSync(assetsDir, { recursive: true });
+
+    // Create tailwind.css
+    const tailwindCss = `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+`;
+    fs.writeFileSync(path.join(assetsDir, "tailwind.css"), tailwindCss);
+
+    // Update postcss.config.cjs
+    const postcssConfig = `/** @type {import('postcss-load-config').Config} */
+const config = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+
+export default config;
+`;
+    fs.writeFileSync(path.join(targetDir, "postcss.config.cjs"), postcssConfig);
+
+    // Update package.json with tailwind build script
+    const packageJsonPath = path.join(targetDir, "package.json");
+    if (fs.existsSync(packageJsonPath)) {
+      const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+      pkg.scripts.tailwind = "tailwindcss -i ./src/assets/tailwind.css -o ./public/dist/tailwind.css --watch";
+      pkg.scripts.build = "tsc && npm run tailwind";
+      fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2));
+      console.log("✓ Added Tailwind CSS support");
+    }
+  } catch {
+    console.error("Failed to setup Tailwind CSS. Run 'npm install -D tailwindcss postcss autoprefixer' manually.");
   }
 }
 
