@@ -1,0 +1,117 @@
+import { Request, Response } from "express";
+import { hashPassword, verifyPassword, signToken, verifyToken } from "@erwininteractive/mvc";
+import { getPrismaClient } from "@erwininteractive/mvc";
+
+const prisma = getPrismaClient();
+
+export async function showLogin(req: Request, res: Response) {
+  res.render("auth/login", { title: "Login" });
+}
+
+export async function showRegister(req: Request, res: Response) {
+  res.render("auth/register", { title: "Register" });
+}
+
+export async function login(req: Request, res: Response) {
+  const { email, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (!user) {
+      return res.render("auth/login", {
+        title: "Login",
+        error: "Invalid email or password"
+      });
+    }
+
+    const isValid = await verifyPassword(password, user.hashedPassword);
+    if (!isValid) {
+      return res.render("auth/login", {
+        title: "Login",
+        error: "Invalid email or password"
+      });
+    }
+
+    const token = signToken({ userId: user.id, email: user.email });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24 // 24 hours
+    });
+
+    res.redirect("/");
+  } catch (err) {
+    console.error("Login error:", err);
+    res.render("auth/login", {
+      title: "Login",
+      error: "An error occurred during login"
+    });
+  }
+}
+
+export async function register(req: Request, res: Response) {
+  const { email, password, confirmPassword } = req.body;
+
+  if (password !== confirmPassword) {
+    return res.render("auth/register", {
+      title: "Register",
+      error: "Passwords do not match"
+    });
+  }
+
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (existingUser) {
+      return res.render("auth/register", {
+        title: "Register",
+        error: "Email already in use"
+      });
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    await prisma.user.create({
+      data: {
+        email,
+        hashedPassword,
+        role: "user"
+      }
+    });
+
+    res.redirect("/login");
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.render("auth/register", {
+      title: "Register",
+      error: "An error occurred during registration"
+    });
+  }
+}
+
+export async function logout(req: Request, res: Response) {
+  res.clearCookie("token");
+  res.redirect("/login");
+}
+
+export async function requireAuth(req: Request, res: Response, next: any) {
+  const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    req.user = decoded;
+    next();
+  } catch {
+    res.clearCookie("token");
+    res.redirect("/login");
+  }
+}
