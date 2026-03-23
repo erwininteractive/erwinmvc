@@ -1,4 +1,5 @@
 import { createMvcApp, startServer } from "@erwininteractive/mvc";
+import cookieParser from "cookie-parser";
 
 async function main() {
   const { app } = await createMvcApp({
@@ -6,8 +7,11 @@ async function main() {
     publicPath: "public",
   });
 
+  // Parse cookies (needed for JWT authentication)
+  app.use(cookieParser());
+
   // Root route - displays welcome page
-  app.get("/", (req, res) => {
+  app.get("/", (req: any, res: any) => {
     res.render("index", { title: "Welcome" });
   });
 

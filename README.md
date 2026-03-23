@@ -279,6 +279,24 @@ app.get("/protected", authenticate, (req, res) => {
 });
 ```
 
+### Auto-Inject User to Views
+
+When a user is authenticated, their information is automatically available in all EJS templates via `res.locals.user`:
+
+```typescript
+// In any EJS template
+<% if (user) { %>
+  <p>Welcome, <%= user.email %></p>
+<% } else { %>
+  <a href="/auth/login">Login</a>
+<% } %>
+```
+
+The middleware automatically:
+- Extracts JWT from `req.cookies.token` or `Authorization` header
+- Verifies the token using `JWT_SECRET`
+- Sets `req.user` and `res.locals.user` for use in views
+
 ---
 
 ### WebAuthn (Passkeys)

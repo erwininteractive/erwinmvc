@@ -76,6 +76,8 @@ Create `.ejs` files in `src/views/`. EJS lets you use JavaScript in your HTML:
 <%- include('partials/header') %>
 ```
 
+**Note:** When using authentication, the `user` object is automatically available in all views when a user is logged in. No need to pass it manually!
+
 ### Adding Routes
 
 Edit `src/server.ts` to add routes:

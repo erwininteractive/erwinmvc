@@ -4,6 +4,7 @@ import { createClient, RedisClientType } from "redis";
 import RedisStore from "connect-redis";
 import helmet from "helmet";
 import cors from "cors";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -103,6 +104,21 @@ export async function createMvcApp(options: MvcAppOptions = {}): Promise<MvcApp>
   // View engine
   app.set("view engine", "ejs");
   app.set("views", path.resolve(viewsPath));
+
+  // Auto-inject authenticated user into views via res.locals
+  app.use((req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    try {
+      const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+        req.user = decoded;
+        res.locals.user = decoded;
+      }
+    } catch {
+      // Token invalid or expired
+    }
+    next();
+  });
 
   // Add respond helper to response
   app.use((req, res, next) => {
