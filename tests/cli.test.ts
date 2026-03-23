@@ -39,4 +39,12 @@ describe("CLI", () => {
     expect(content).toContain('command("controller');
     expect(content).toContain('command("resource');
   });
+
+  it("should define list:routes command", () => {
+    const cliPath = path.resolve(__dirname, "../src/cli.ts");
+    const content = fs.readFileSync(cliPath, "utf-8");
+
+    expect(content).toContain('command("list:routes")');
+    expect(content).toContain("listRoutes");
+  });
 });
