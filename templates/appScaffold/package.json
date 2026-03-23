@@ -12,11 +12,13 @@
     "db:push": "prisma db push"
   },
   "dependencies": {
-    "@erwininteractive/mvc": "^0.4.0",
-    "cookie-parser": "^1.4.6"
+    "@erwininteractive/mvc": "^0.6.0",
+    "cookie-parser": "^1.4.6",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",
+    "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.5",
     "tsx": "^4.19.1",

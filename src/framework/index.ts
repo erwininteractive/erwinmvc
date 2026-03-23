@@ -23,5 +23,8 @@ export {
   getRPConfig,
 } from "./WebAuthn";
 
+// Validation
+export { validate, getFieldErrors, getErrors, getOldInput } from "./Validation";
+
 // Routing
 export { registerControllers, registerController } from "./Router";
