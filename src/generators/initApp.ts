@@ -150,52 +150,45 @@ function setupDatabase(targetDir: string): void {
   }
 }
 
+
 /**
- * Setup Tailwind CSS with PostCSS.
+ * Setup Tailwind CSS with pre-built CSS.
  */
 function setupTailwind(targetDir: string): void {
   console.log("\nSetting up Tailwind CSS...");
   try {
     execSync("npm install -D tailwindcss postcss autoprefixer", { cwd: targetDir, stdio: "inherit" });
-    // Removed npx command - using manual config
 
-    // Create assets directory
+    const templateDir = getTemplatesDir();
+    const templateCss = path.join(templateDir, "appScaffold", "public", "dist", "tailwind.css");
+    const targetCss = path.join(targetDir, "public", "dist", "tailwind.css");
+
+    fs.mkdirSync(path.dirname(targetCss), { recursive: true });
+    fs.copyFileSync(templateCss, targetCss);
+
     const assetsDir = path.join(targetDir, "src", "assets");
     fs.mkdirSync(assetsDir, { recursive: true });
+    fs.writeFileSync(path.join(assetsDir, "tailwind.css"), `@import "tailwindcss";\n`);
 
-    // Create tailwind.css
-    const tailwindCss = `@tailwind base;
-@tailwind components;
-@tailwind utilities;
+    const config = `import { type Config } from "tailwindcss";
+
+export default {
+  content: ["./src/**/*.{js,ts,tsx}"],
+  theme: { extend: {} },
+  plugins: [],
+} satisfies Config;
 `;
-    fs.writeFileSync(path.join(assetsDir, "tailwind.css"), tailwindCss);
+    fs.writeFileSync(path.join(targetDir, "tailwind.config.ts"), config);
 
-    // Update postcss.config.cjs
-    const postcssConfig = `/** @type {import('postcss-load-config').Config} */
-const config = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};
-
-export default config;
-`;
-    fs.writeFileSync(path.join(targetDir, "postcss.config.cjs"), postcssConfig);
-
-    // Update package.json with tailwind build script
-    const packageJsonPath = path.join(targetDir, "package.json");
-    if (fs.existsSync(packageJsonPath)) {
-      const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-      pkg.scripts.tailwind = "tailwindcss -i ./src/assets/tailwind.css -o ./public/dist/tailwind.css --watch";
-      pkg.scripts.build = "tsc && npm run tailwind";
-      fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2));
-      console.log("✓ Added Tailwind CSS support");
-    }
+    console.log("✓ Added Tailwind CSS support");
   } catch {
-    console.error("Failed to setup Tailwind CSS. Run 'npm install -D tailwindcss postcss autoprefixer' manually.");
+    console.error("Failed to setup Tailwind CSS.");
   }
 }
+
+/**
+ * Recursively copy a directory.
+ */
 
 /**
  * Recursively copy a directory.
