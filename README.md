@@ -546,6 +546,50 @@ NODE_ENV=development                                       # Environment
 
 ---
 
+## Escape Hatch Documentation
+
+### Island Pattern (EJS + React)
+
+Use EJS for layout while adding React components where needed:
+
+```html
+<!-- layout.ejs -->
+<!DOCTYPE html>
+<html>
+<head><title><%= title %></title></head>
+<body>
+  <header><%- include('partial/header') %></header>
+  
+  <main id="app"><%- body %></main>
+  
+  <!-- React island -->
+  <div id="comment-section" data-post-id="<%= post.id %>"></div>
+  
+  <footer><%- include('partial/footer') %></footer>
+  
+  <script type="module" src="/src/components/CommentSection.tsx"></script>
+</body>
+</html>
+```
+
+### API-Only Mode
+
+Disable EJS engine for pure API responses:
+
+```typescript
+const { app } = await createMvcApp({
+  viewsPath: "src/views",
+  disableViewEngine: true, // Don't setup EJS
+});
+
+app.get("/api/users", async (req, res) => {
+  const users = await prisma.user.findMany();
+  res.json(users);  // Always JSON, no EJS
+});
+```
+
+---
+
 ## Learn More
 
 - [Express.js Documentation](https://expressjs.com/)

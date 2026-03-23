@@ -203,6 +203,32 @@ Then run migrations again:
 npx prisma migrate dev --name add-post-fields
 ```
 
+## Full-Stack Flexibility
+
+### Island Pattern (EJS + React)
+
+Use EJS for layout while adding React components where needed:
+
+```html
+<div id="comment-section" data-post-id="<%= post.id %>"></div>
+<script type="module" src="/src/components/CommentSection.tsx"></script>
+```
+
+### API-Only Mode
+
+For pure API development, disable EJS:
+
+```typescript
+const { app } = await createMvcApp({
+  viewsPath: "src/views",
+  disableViewEngine: true,
+});
+
+app.get("/api/users", async (req, res) => {
+  res.json(users);  // Always JSON
+});
+```
+
 ### Step 5: Use in Your Code
 
 ```typescript
@@ -286,10 +312,22 @@ Link to them in your templates:
 
 | Command | Description |
 |---------|-------------|
-| `npx erwinmvc generate controller <Name>` | Create a CRUD controller |
-| `npx erwinmvc generate model <Name>` | Create a database model |
+| `npx @erwininteractive/mvc init <dir>` | Create a new app |
+| `npx erwinmvc generate resource <name>` | Generate model + controller + views |
+| `npx erwinmvc generate controller <name>` | Generate a CRUD controller |
+| `npx erwinmvc generate model <name>` | Generate a database model |
+| `npx erwinmvc webauthn` | Generate WebAuthn authentication (security keys) |
+| `npx erwinmvc list:routes` | Show all defined routes |
 
----
+### Init Options
+
+| Option | Description |
+|--------|-------------|
+| `--skip-install` | Skip running npm install |
+| `--with-database` | Include Prisma database setup |
+| `--with-ci` | Include GitHub Actions CI workflow |
+
+### Resource Options
 
 ## Learn More
 

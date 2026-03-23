@@ -6,13 +6,21 @@ import { generateModel } from "./generators/generateModel";
 import { generateController } from "./generators/generateController";
 import { generateResource } from "./generators/generateResource";
 import { generateWebAuthn } from "./generators/generateWebAuthn";
+import { listRoutes } from "./generators/listRoutes";
 
 const program = new Command();
 
 program
   .name("erwinmvc")
   .description("CLI for @erwininteractive/mvc framework")
-  .version("0.2.0");
+  .version("0.2.0")
+  .addHelpText("after", `
+Examples:
+  $ erwinmvc init myapp                     Create a new app
+  $ erwinmvc generate resource Post         Generate CRUD for Post
+  $ erwinmvc webauthn                       Setup passkey authentication
+  $ erwinmvc list:routes                    Show all routes
+`);
 
 // Init command - scaffold a new application
 program
@@ -120,5 +128,19 @@ program
       }
     },
   );
+
+// List routes command - shows all defined routes
+program
+  .command("list:routes")
+  .alias("lr")
+  .description("List all routes in the application")
+  .action(async (): Promise<void> => {
+    try {
+      listRoutes();
+    } catch (err) {
+      console.error("Error:", err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
 
 program.parse();
