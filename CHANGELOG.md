@@ -1,4 +1,4 @@
-## Release v0.8.1
+## Release v0.8.2
 
 ### Changes
 
