@@ -1,4 +1,4 @@
-## Release v0.6.7
+## Release v0.7.1
 
 ### Changes
 
