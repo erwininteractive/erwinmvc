@@ -7,6 +7,7 @@ import { generateController } from "./generators/generateController";
 import { generateResource } from "./generators/generateResource";
 import { generateWebAuthn } from "./generators/generateWebAuthn";
 import { listRoutes } from "./generators/listRoutes";
+import { makeAuth } from "./generators/makeAuth";
 
 const program = new Command();
 
@@ -19,6 +20,7 @@ Examples:
   $ erwinmvc init myapp                     Create a new app
   $ erwinmvc generate resource Post         Generate CRUD for Post
   $ erwinmvc webauthn                       Setup passkey authentication
+  $ erwinmvc make:auth                      Generate authentication system
   $ erwinmvc list:routes                    Show all routes
 `);
 
@@ -137,6 +139,23 @@ program
   .action(async (): Promise<void> => {
     try {
       listRoutes();
+    } catch (err) {
+      console.error("Error:", err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
+
+// Make auth command - generate complete authentication system
+program
+  .command("make:auth")
+  .alias("ma")
+  .description("Generate a complete authentication system")
+  .option("--without-model", "Skip generating User model")
+  .option("--session-only", "Only session-based auth (no JWT tokens)")
+  .option("--jwt-only", "Only JWT tokens (no sessions)")
+  .action(async (options: { withoutModel?: boolean; sessionOnly?: boolean; jwtOnly?: boolean }): Promise<void> => {
+    try {
+      await makeAuth(options);
     } catch (err) {
       console.error("Error:", err instanceof Error ? err.message : err);
       process.exit(1);
