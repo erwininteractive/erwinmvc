@@ -1,3 +1,13 @@
+## Release v0.4.2 (unreleased)
+
+### Changes
+- feat(auth): Auto-inject authenticated user to views via res.locals #8
+- feat(scaffold): Add cookie-parser for JWT cookie authentication #4
+- docs: Document user auto-injection feature in README
+- test: Fix scaffold package.json to use correct framework version #17
+
+---
+
 ## Release v0.4.1
 
 ### Changes
