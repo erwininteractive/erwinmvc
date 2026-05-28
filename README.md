@@ -294,4 +294,8 @@ npm run build
 
 ## License
 
-MIT &copy; [Erwin Interactive](https://github.com/erwininteractive)
+MIT, see [LICENSE](LICENSE).
+
+## Contributing
+
+PRs welcome. Please open an issue first for major changes.
