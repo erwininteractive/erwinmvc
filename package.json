@@ -1,5 +1,5 @@
 {
-  "name": "@erwininteractive/mvc",
+  "name": "@andrewthecoder/erwinmvc",
   "version": "0.8.3",
   "description": "A lightweight, full-featured MVC framework for Node.js with Express, Prisma, and EJS",
   "main": "dist/framework/index.js",
@@ -32,7 +32,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/erwininteractive/typescript-erwinmvc.git"
+    "url": "https://github.com/andrewthecodertx/erwinmvc.git"
   },
   "engines": {
     "node": ">=20.0.0"
