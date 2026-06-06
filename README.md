@@ -1,4 +1,6 @@
-# @erwininteractive/mvc
+# @andrewthecoder/erwinmvc
+
+[![npm version](https://img.shields.io/npm/v/@andrewthecoder/erwinmvc.svg)](https://www.npmjs.com/package/@andrewthecoder/erwinmvc)
 
 A lightweight, full-featured MVC framework for Node.js 20+ built with TypeScript.
 
@@ -23,7 +25,7 @@ A lightweight, full-featured MVC framework for Node.js 20+ built with TypeScript
 ## Quick Start
 
 ```bash
-npx @erwininteractive/mvc init myapp
+npx @andrewthecoder/erwinmvc init myapp
 cd myapp
 npm run dev
 ```
@@ -36,22 +38,22 @@ Visit http://localhost:3000 - your app is running!
 
 ```bash
 # Basic app
-npx @erwininteractive/mvc init myapp
+npx @andrewthecoder/erwinmvc init myapp
 
 # With Tailwind CSS
-npx @erwininteractive/mvc init myapp --with-tailwind
+npx @andrewthecoder/erwinmvc init myapp --with-tailwind
 
 # With database support (Prisma)
-npx @erwininteractive/mvc init myapp --with-database
+npx @andrewthecoder/erwinmvc init myapp --with-database
 
 # With database + Tailwind
-npx @erwininteractive/mvc init myapp --with-database --with-tailwind
+npx @andrewthecoder/erwinmvc init myapp --with-database --with-tailwind
 
 # With GitHub Actions CI
-npx @erwininteractive/mvc init myapp --with-ci
+npx @andrewthecoder/erwinmvc init myapp --with-ci
 
 # Skip npm install (install manually later)
-npx @erwininteractive/mvc init myapp --skip-install
+npx @andrewthecoder/erwinmvc init myapp --skip-install
 ```
 
 ### Generate models
@@ -208,7 +210,7 @@ Use Zod schemas for type-safe form validation:
 
 ```typescript
 import { z } from "zod";
-import { validate } from "@erwininteractive/mvc";
+import { validate } from "@andrewthecoder/erwinmvc";
 
 const userSchema = z.object({
   username: z.string().min(3),

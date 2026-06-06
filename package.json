@@ -19,6 +19,9 @@
     "test": "jest",
     "prepare": "npm run build"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "mvc",
     "framework",
@@ -32,7 +35,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andrewthecodertx/erwinmvc.git"
+    "url": "git+https://github.com/andrewthecodertx/erwinmvc.git"
   },
   "engines": {
     "node": ">=20.0.0"
